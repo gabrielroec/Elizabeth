@@ -1,0 +1,14 @@
+{% assign menu_items = linklists.main-menu.links %}
+<div id="header" data-menu='[
+  {% for link in menu_items %}
+    {
+      "id": "{{ link.object.id }}",
+      "title": "{{ link.title | escape }}",
+      "url": "{{ link.url | escape }}"
+    }{% if forloop.last == false %},{% endif %}
+  {% endfor %}
+]'>
+</div>
+
+<script type="module" src="{{ 'vite-client.js' | asset_url }}" defer></script>
+<script type="module" src="{{ 'vite-Header.js' | asset_url }}" defer></script>

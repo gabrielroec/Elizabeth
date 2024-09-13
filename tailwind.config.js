@@ -1,12 +1,5 @@
-module.exports = {
-  content: [
-    './layout/*.liquid',
-    './sections/*.liquid',
-    './snippets/*.liquid',
-    './templates/*.liquid'
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-}
+export const content = ["./layout/*.liquid", "./sections/*.liquid", "./snippets/*.liquid", "./templates/*.liquid"];
+export const theme = {
+  extend: {},
+};
+export const plugins = [];

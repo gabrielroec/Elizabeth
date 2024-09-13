@@ -1,0 +1,30 @@
+<div class="header-group">
+  {% render 'welcome-react' %}
+  {% render 'header' %}
+</div>
+
+{% schema %}
+{
+  "name": "Header Group",
+  "settings": [
+    {
+      "type": "text",
+      "id": "welcome_text",
+      "label": "Texto de boas-vindas",
+      "default": "Limited-time offer! #WELCOME : Explore Deals & Offers   SHOP NOW! #KiduSafeStyle : Elevate Your Safety in Style 😷 SHOP NOW! #KiduFunTime : Explore exclusive deals at Kidu!   SHOP NOW"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Cor de fundo",
+      "default": "#ce126e"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header Group"
+    }
+  ]
+}
+
+{% endschema %}

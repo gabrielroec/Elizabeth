@@ -1,0 +1,180 @@
+
+<!-- Cart Drawer Snippet (snippets/cart-drawer.liquid) -->
+<div id="cart-drawer" class="cart-drawer fixed right-0 top-0 w-80 h-full bg-white shadow-lg transition-transform transform translate-x-full z-50">
+  <div class="cart-drawer-header p-4 flex justify-between items-center border-b">
+    <h2 class="text-lg font-bold">MY CART</h2>
+    <button class="cart-drawer-close text-2xl">&times;</button>
+  </div>
+
+  <div class="cart-drawer-body p-4">
+    {% if cart.item_count > 0 %}
+      <ul id="cart-items" class="cart-items-list">
+        {% for item in cart.items %}
+          <li class="cart-item flex justify-between items-center mb-4">
+            <div class="cart-item-info">
+              <p class="text-sm">{{ item.product.title }}</p>
+              <p class="text-xs text-gray-500">Quantidade: 
+                <button class="decrease-qty" data-key="{{ item.key }}">-</button>
+                <span>{{ item.quantity }}</span>
+                <button class="increase-qty" data-key="{{ item.key }}">+</button>
+              </p>
+              <button class="remove-item text-red-500" data-key="{{ item.key }}">Remover</button>
+            </div>
+            <div class="cart-item-image">
+              <img src="{{ item.image | img_url: 'small' }}" width="auto" height="auto" class="w-16 h-16">
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+
+      <div class="cart-drawer-footer mt-4">
+        <p class="font-bold text-lg">Total: {{ cart.total_price | money }}</p>
+        <a href="/cart" class="btn btn-primary mt-4 block text-center">Ver Carrinho</a>
+        <a href="/checkout" class="btn btn-secondary mt-2 block text-center">Finalizar Compra</a>
+      </div>
+    {% else %}
+      <p class="text-center">Seu carrinho está vazio.</p>
+    {% endif %}
+  </div>
+</div>
+
+
+<!-- Styles in the snippet (Not recommended) -->
+<style>
+.cart-drawer {
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(100%);
+}
+
+.cart-drawer.open {
+  transform: translateX(0);
+}
+
+.cart-drawer-close {
+  cursor: pointer;
+}
+
+.btn {
+  display: block;
+  padding: 0.75rem 1.5rem;
+  text-align: center;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.btn-primary {
+  background-color: #3490dc;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #38c172;
+  color: white;
+}
+
+.decrease-qty, .increase-qty {
+  border: 1px solid #3490dc;
+  background-color: transparent;
+  padding: 0 10px;
+  cursor: pointer;
+}
+
+.remove-item {
+  color: red;
+  cursor: pointer;
+}
+
+</style>
+
+<!-- JavaScript in the snippet (Not recommended) -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const cartDrawer = document.getElementById('cart-drawer');
+  const cartToggle = document.getElementById('cart-icon');
+  const cartClose = document.querySelector('.cart-drawer-close');
+
+  // Open drawer
+  cartToggle.addEventListener('click', function() {
+    cartDrawer.classList.add('open');
+  });
+
+  // Close drawer
+  cartClose.addEventListener('click', function() {
+    cartDrawer.classList.remove('open');
+  });
+
+  // Close drawer when clicking outside
+  document.addEventListener('click', function(event) {
+    if (!cartDrawer.contains(event.target) && !cartToggle.contains(event.target)) {
+      cartDrawer.classList.remove('open');
+    }
+  });
+
+  // Increase quantity
+  document.querySelectorAll('.increase-qty').forEach(button => {
+    button.addEventListener('click', function() {
+      updateCartQuantity(button.dataset.key, 1, button);
+    });
+  });
+
+  // Decrease quantity
+  document.querySelectorAll('.decrease-qty').forEach(button => {
+    button.addEventListener('click', function() {
+      updateCartQuantity(button.dataset.key, -1, button);
+    });
+  });
+
+  // Remove item
+  document.querySelectorAll('.remove-item').forEach(button => {
+    button.addEventListener('click', function() {
+      updateCartQuantity(button.dataset.key, 0, button);
+    });
+  });
+
+  // Function to update cart quantity via AJAX and update the total
+  function updateCartQuantity(lineItemKey, quantityChange, element) {
+    const quantityElement = element.parentNode.querySelector('span');
+    const currentQuantity = parseInt(quantityElement.textContent);
+
+    const newQuantity = currentQuantity + quantityChange;
+    if (newQuantity < 0) return;
+
+    fetch('/cart/change.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: lineItemKey,
+        quantity: newQuantity
+      })
+    })
+    .then(response => response.json())
+    .then(cart => {
+      // Update the quantity in the drawer
+      if (newQuantity === 0) {
+        element.closest('li').remove(); // Remove the item completely if the quantity is zero
+      } else {
+        quantityElement.textContent = newQuantity; // Update the quantity displayed
+      }
+
+      // Update the total price
+      updateTotalPrice(cart.total_price);
+
+      // Show empty cart message if no items remain
+      if (cart.item_count === 0) {
+        document.querySelector('.cart-drawer-body').innerHTML = '<p class="text-center">Seu carrinho está vazio.</p>';
+      }
+    })
+    .catch(error => console.error('Error updating cart:', error));
+  }
+
+  // Function to update the total price in the drawer
+  function updateTotalPrice(newTotal) {
+    const totalElement = document.querySelector('.cart-drawer-footer .font-bold');
+    totalElement.textContent = `Total: ${Shopify.formatMoney(newTotal)}`;
+  }
+});
+
+
+</script>
