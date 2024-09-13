@@ -1,6 +1,29 @@
+/*
+* ------------------------------------------------------------
+* IMPORTANT: The contents of this file are auto-generated.
+*
+* This file may be updated by the Shopify admin theme editor
+* or related systems. Please exercise caution as any changes
+* made to this file may be overwritten.
+* ------------------------------------------------------------
+*/
 {
-  "current": "Default",
+  "current": {
+    "sections": {
+      "header-group": {
+        "type": "header-group",
+        "settings": {
+          "welcome_text": "Limited-time offer! #WELCOME : Explore Deals & Offers   SHOP NOW! #KiduSafeStyle : Elevate Your Safety in Style 😷 SHOP NOW! #KiduFunTime : Explore exclusive deals at Kidu!   SHOP NOW",
+          "background_color": "#f91010"
+        }
+      }
+    },
+    "content_for_index": [
+
+    ]
+  },
   "presets": {
-    "Default": {}
+    "Default": {
+    }
   }
 }
